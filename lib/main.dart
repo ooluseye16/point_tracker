@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pointtrackernew/views/character_list.dart';
+import 'package:point_tracker/views/character_list.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Point Tracker',
       theme: ThemeData(
@@ -19,8 +21,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       color: Colors.teal,
-      home: CharacterList(),
+      home: const CharacterList(),
     );
   }
 }
-

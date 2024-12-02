@@ -1,34 +1,37 @@
-import 'package:fab_circular_menu/fab_circular_menu.dart';
+import 'package:fab_circular_menu_plus/fab_circular_menu_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:pointtrackernew/data/dbhelper.dart';
-import 'package:pointtrackernew/model/character.dart';
-import 'package:pointtrackernew/views/update_score.dart';
+import 'package:point_tracker/data/dbhelper.dart';
+import 'package:point_tracker/model/character.dart';
+import 'package:point_tracker/views/update_score.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'add_character.dart';
 
 class CharacterList extends StatefulWidget {
+  const CharacterList({Key? key}) : super(key: key);
+
   @override
-  _CharacterListState createState() => _CharacterListState();
+  State<CharacterList> createState() => _CharacterListState();
 }
 
 class _CharacterListState extends State<CharacterList> {
   DbHelper dbHelper = DbHelper();
-  List<Character> characterList;
+  List<Character> characterList = [];
   int count = 0;
 
   @override
-  Widget build(BuildContext context) {
-    if (characterList == null) {
-      characterList = List<Character>();
-      updateListView();
-    }
+  void initState() {
+    super.initState();
+    updateListView();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
-          "LeaderBoard",
+        title: const Text(
+          "Leaderboard",
           style: TextStyle(
               color: Colors.teal, fontWeight: FontWeight.w600, fontSize: 20.0),
         ),
@@ -40,15 +43,15 @@ class _CharacterListState extends State<CharacterList> {
               padding: const EdgeInsets.all(15.0),
               child: getTodoListView(),
             )
-          : Center(
+          : const Center(
               child: Text("Tap the button below to add contestants"),
             ),
-      floatingActionButton: FabCircularMenu(
-        fabOpenIcon: Icon(
+      floatingActionButton: FabCircularMenuPlus(
+        fabOpenIcon: const Icon(
           Icons.menu,
           color: Colors.teal,
         ),
-        fabCloseIcon: Icon(
+        fabCloseIcon: const Icon(
           Icons.close,
           color: Colors.teal,
         ),
@@ -62,7 +65,7 @@ class _CharacterListState extends State<CharacterList> {
             backgroundColor: Colors.white,
             child: IconButton(
               tooltip: "Add new contestant",
-              icon: Icon(
+              icon: const Icon(
                 Icons.add_box,
                 color: Colors.teal,
               ),
@@ -90,7 +93,7 @@ class _CharacterListState extends State<CharacterList> {
             backgroundColor: Colors.white,
             child: IconButton(
               tooltip: "Add score to existing contestant",
-              icon: Icon(
+              icon: const Icon(
                 Icons.add,
                 color: Colors.teal,
               ),
@@ -99,7 +102,7 @@ class _CharacterListState extends State<CharacterList> {
                   return showDialog<void>(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
+                        return const AlertDialog(
                           title: Text("Empty LeaderBoard"),
                           content: Text(
                             "The leaderBoard contains no contestant. Kindly add at least 2 contestant",
@@ -139,8 +142,8 @@ class _CharacterListState extends State<CharacterList> {
       Future<List<Character>> characterListFuture = dbHelper.getCharacterList();
       characterListFuture.then((charList) {
         setState(() {
-          this.characterList = charList;
-          this.count = charList.length;
+          characterList = charList;
+          count = charList.length;
         });
       });
     });
@@ -153,11 +156,11 @@ class _CharacterListState extends State<CharacterList> {
           Color backgroundColor = Colors.teal;
 
           if (index == 0) {
-            backgroundColor = Color(0xffffd700);
+            backgroundColor = const Color(0xffffd700);
           } else if (index == 1) {
-            backgroundColor = Color(0xffc0c0c0);
+            backgroundColor = const Color(0xffc0c0c0);
           } else if (index == 2) {
-            backgroundColor = Color(0xffcd7f32);
+            backgroundColor = const Color(0xffcd7f32);
           }
           return Dismissible(
             direction: DismissDirection.endToStart,
@@ -169,10 +172,13 @@ class _CharacterListState extends State<CharacterList> {
             },
             background: Container(),
             secondaryBackground: Container(
-              padding: EdgeInsets.only(right: 20.0),
+              padding: const EdgeInsets.only(right: 20.0),
               alignment: Alignment.centerRight,
-              child: Icon(Icons.delete, color: Colors.white,),
               color: Colors.red,
+              child: const Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
             ),
             child: Card(
               color: Colors.white,
@@ -182,14 +188,14 @@ class _CharacterListState extends State<CharacterList> {
                   backgroundColor: backgroundColor,
                   child: Text(
                     "${index + 1}",
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
                 title: Text(characterList[index].name),
                 trailing: Text(
                   "${characterList[index].points} point(s)",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -198,21 +204,22 @@ class _CharacterListState extends State<CharacterList> {
   }
 
   void _delete(BuildContext context, Character character) async {
-    int result = await dbHelper.deleteCharacter(character.id);
+    int result = await dbHelper.deleteCharacter(character.id!);
     if (result != 0) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        action: SnackBarAction(
-          onPressed: () async{
-         
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          action: SnackBarAction(
+            onPressed: () async {
               result = await dbHelper.insertCharacter(character);
               updateListView();
-          },
-          label: "UNDO",
-          textColor: Colors.blue,
-        ),
-        content: Text("Contestant ${character.name} has been deleted!"),
-      ));
-      updateListView();
+            },
+            label: "UNDO",
+            textColor: Colors.blue,
+          ),
+          content: Text("Contestant ${character.name} has been deleted!"),
+        ));
+        updateListView();
+      }
     }
   }
 }

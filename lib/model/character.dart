@@ -1,37 +1,20 @@
-class Character{
-  int _id;
-  String _name;
-  int _points;
+class Character {
+  int? id;
+  String name;
+  int points;
 
-  Character(this._name, this._points);
-  Character.withId(this._id, this._name, this._points);
-
-  int get id => _id;
-  String get name => _name;
-  int get points => _points;
-
-  set name(String newName) {
-    _name = newName;
-  }
-
-  set points(int newPoints) {
-    _points = newPoints;
-  }
+  Character({ this.id, required this.name, required this.points});
 
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    if(id != null) {
-      map['id'] =_id;
-    }
-    map['name'] = _name;
-    map['points'] = _points;
-
+    var map = <String, dynamic>{};
+    map['name'] = name;
+    map['points'] = points;
     return map;
   }
 
-  Character.fromObject(dynamic o) {
-    this._id = o['id'];
-    this._name = o['name'];
-    this._points = o['points'];
-  }
+  //from map
+  Character.fromMap(Map<String, dynamic> map)
+      : id = map['id'],
+        name = map['name'],
+        points = map['points'];
 }

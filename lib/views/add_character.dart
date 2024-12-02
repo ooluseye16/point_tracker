@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pointtrackernew/data/dbhelper.dart';
-import 'package:pointtrackernew/model/character.dart';
-import 'package:pointtrackernew/utils/util.dart';
+import 'package:point_tracker/data/dbhelper.dart';
+import 'package:point_tracker/model/character.dart';
+import 'package:point_tracker/utils/util.dart';
 
 class AddContestant extends StatefulWidget {
   final List<Character> characterList;
-  AddContestant(this.characterList);
+  const AddContestant(this.characterList, {Key? key}) : super(key: key);
   @override
-  _AddContestantState createState() => _AddContestantState(this.characterList);
+  State<AddContestant> createState() => _AddContestantState();
 }
 
 class _AddContestantState extends State<AddContestant> {
   DbHelper helper = DbHelper();
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  int points;
-  String newContestants;
+  int points = 0;
+  String newContestants = "";
 
-  var characterList;
+  List<Character> characterList = [];
 
+  @override
+  void initState() {
+    super.initState();
+    characterList = widget.characterList;
+  }
 
   List<String> get getCharNames {
     List<String> charNames = [];
@@ -29,14 +34,14 @@ class _AddContestantState extends State<AddContestant> {
     }
     return charNames;
   }
-  _AddContestantState(this.characterList);
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white10,
       child: Container(
-        padding: EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(20.0),
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(20.0),
@@ -46,13 +51,12 @@ class _AddContestantState extends State<AddContestant> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
+            const Text(
               "Add New Contestant",
               style: TextStyle(
                   color: Colors.teal,
                   fontWeight: FontWeight.w500,
-                  fontSize: 20.0
-              ),
+                  fontSize: 20.0),
               textAlign: TextAlign.center,
             ),
             Form(
@@ -62,20 +66,21 @@ class _AddContestantState extends State<AddContestant> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("Name:", style: TextStyle(
-                          color: Color(0xff787878),
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w500
-                      ),),
-                      SizedBox(
+                      const Text(
+                        "Name:",
+                        style: TextStyle(
+                            color: Color(0xff787878),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
                         height: 8.0,
                       ),
                       TextFormField(
                         validator: (input) {
-                          if(getCharNames.contains(input)){
+                          if (getCharNames.contains(input)) {
                             return "Name already exists";
-                          }
-                          else {
+                          } else {
                             return null;
                           }
                         },
@@ -87,21 +92,25 @@ class _AddContestantState extends State<AddContestant> {
                         },
                         decoration: kInputDecoration.copyWith(
                             hintText: "Name of Contestants"),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.teal,
                         ),
                       ),
-                      SizedBox(height: 15.0,),
-                      Text("Starting Point(s):", style: TextStyle(
-                          color: Color(0xff787878),
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w500
-                      ),),
-                      SizedBox(
+                      const SizedBox(
+                        height: 15.0,
+                      ),
+                      const Text(
+                        "Starting Point(s):",
+                        style: TextStyle(
+                            color: Color(0xff787878),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
                         height: 8.0,
                       ),
                       TextFormField(
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.teal,
                         ),
                         cursorColor: Colors.teal,
@@ -109,13 +118,13 @@ class _AddContestantState extends State<AddContestant> {
                             hintText: "Starting point e.g 100"),
                         keyboardType: TextInputType.number,
                         validator: (input) {
-                          final isDigitsOnly = int.tryParse(input);
-                          return isDigitsOnly == null
-                              ? 'Input needs to be digits only'
-                              : null;
+                          if (input == null || input.isEmpty) {
+                            return 'Input cannot be empty';
+                          }
+                          return null;
                         },
                         inputFormatters: [
-                          WhitelistingTextInputFormatter.digitsOnly
+                          FilteringTextInputFormatter.digitsOnly
                         ],
                         onChanged: (value) {
                           setState(() {
@@ -123,7 +132,7 @@ class _AddContestantState extends State<AddContestant> {
                           });
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15.0,
                       ),
                       Center(
@@ -131,25 +140,28 @@ class _AddContestantState extends State<AddContestant> {
                           minWidth: 350.0,
                           height: 50.0,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0)
-                          ),
-                          child: RaisedButton(
-                            textColor: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0)),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                            ),
                             onPressed: () {
                               //add new character to list
-                             setState(() {
-                               if(formKey.currentState.validate()){
-                                 _save(Character(
-                                     newContestants, points
-                                 ));
-                               }
-                             });
+                              setState(() {
+                                if (formKey.currentState!.validate()) {
+                                  _save(Character(
+                                      name: newContestants, points: points));
+                                }
+                              });
                             },
-                            child: Text("ADD", style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w600,
-                            ),),
-                            color: Colors.teal,
+                            child: const Text(
+                              "ADD",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       )
@@ -161,9 +173,11 @@ class _AddContestantState extends State<AddContestant> {
       ),
     );
   }
+
   void _save(Character character) async {
     Navigator.pop(context, true);
     int result = await helper.insertCharacter(character);
-    if(result != 0){} else {}
+    if (result != 0) {
+    } else {}
   }
 }

@@ -1,32 +1,40 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pointtrackernew/data/dbhelper.dart';
-import 'package:pointtrackernew/model/character.dart';
-import 'package:pointtrackernew/utils/util.dart';
+import 'package:point_tracker/data/dbhelper.dart';
+import 'package:point_tracker/model/character.dart';
+import 'package:point_tracker/utils/util.dart';
 
 class UpdateScore extends StatefulWidget {
-
   final List<Character> characterList;
-  UpdateScore(this.characterList);
+  const UpdateScore(this.characterList, {Key? key}) : super(key: key);
   @override
-  _UpdateScoreState createState() => _UpdateScoreState(this.characterList);
+  State<UpdateScore> createState() => _UpdateScoreState();
 }
 
 class _UpdateScoreState extends State<UpdateScore> {
   DbHelper helper = DbHelper();
-  List<Character> characterList;
-  String selectedCharacterName;
-  int points;
+  List<Character> characterList = [];
+  String selectedCharacterName = "";
+  int points = 0;
 
-  _UpdateScoreState(this.characterList);
+  @override
+  void initState() {
+    super.initState();
+    characterList = widget.characterList;
+    if (characterList.isNotEmpty) {
+      selectedCharacterName = characterList[0].name;
+    }
+  }
 
   Character editCharacterPoints(String name, int points) {
-    final tile =
-    characterList.firstWhere((element) => element.name == name, orElse: null);
-    if (tile != null) tile.points += points;
+    final tile = characterList.firstWhere((element) => element.name == name);
+    tile.points += points;
 
     return tile;
   }
+
   List<String> get getCharNames {
     List<String> charNames = [];
     for (Character char in characterList) {
@@ -35,25 +43,26 @@ class _UpdateScoreState extends State<UpdateScore> {
     }
     return charNames;
   }
+
   DropdownButton dropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
     try {
       for (String charName in getCharNames) {
         var newItem = DropdownMenuItem(
-          child: Text(charName),
           value: charName,
+          child: Text(charName),
         );
         dropdownItems.add(newItem);
       }
     } catch (e) {
-      print(e);
+      log(e.toString());
     }
     return DropdownButton<String>(
       value: selectedCharacterName,
       items: dropdownItems,
       onChanged: (value) {
         setState(() {
-          selectedCharacterName = value;
+          selectedCharacterName = value!;
         });
       },
     );
@@ -62,10 +71,10 @@ class _UpdateScoreState extends State<UpdateScore> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xff757575),
+      color: const Color(0xff757575),
       child: Container(
-        padding: EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(20.0),
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(20.0),
@@ -75,7 +84,7 @@ class _UpdateScoreState extends State<UpdateScore> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
+            const Text(
               "Add Score",
               style: TextStyle(
                   color: Colors.teal,
@@ -92,7 +101,7 @@ class _UpdateScoreState extends State<UpdateScore> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
+                          const Text(
                             "Name:",
                             style: TextStyle(
                                 color: Color(0xff787878),
@@ -100,48 +109,46 @@ class _UpdateScoreState extends State<UpdateScore> {
                                 fontWeight: FontWeight.w500),
                           ),
                           Container(
-                            child: characterList.isNotEmpty
-                                ? dropdown()
-                                : null,
+                            child: characterList.isNotEmpty ? dropdown() : null,
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15.0,
                       ),
-                      Text(
+                      const Text(
                         "Point(s)to add",
                         style: TextStyle(
                             color: Color(0xff787878),
                             fontSize: 15.0,
                             fontWeight: FontWeight.w500),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8.0,
                       ),
                       TextFormField(
-                        style: TextStyle(
+                        autovalidateMode: AutovalidateMode.disabled,
+                        style: const TextStyle(
                           color: Colors.teal,
                         ),
                         cursorColor: Colors.teal,
                         decoration: kInputDecoration.copyWith(
                             hintText: "Points toadd to existing points"),
-                        autovalidate: false,
                         keyboardType: TextInputType.number,
                         validator: (input) {
-                          final isDigitsOnly = int.tryParse(input);
-                          return isDigitsOnly == null
-                              ? 'Input needs to be digits only'
-                              : null;
+                          if (input == null || input.isEmpty) {
+                            return 'Input cannot be empty';
+                          }
+                          return null;
                         },
                         inputFormatters: [
-                          WhitelistingTextInputFormatter.digitsOnly
+                          FilteringTextInputFormatter.digitsOnly
                         ],
                         onChanged: (value) {
                           points = int.parse(value);
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15.0,
                       ),
                       Center(
@@ -150,22 +157,25 @@ class _UpdateScoreState extends State<UpdateScore> {
                           height: 50.0,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5.0)),
-                          child: RaisedButton(
-                            textColor: Colors.white,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                            ),
                             onPressed: () {
                               setState(() {
-                              Character char = editCharacterPoints(selectedCharacterName, points);
+                                Character char = editCharacterPoints(
+                                    selectedCharacterName, points);
                                 _add(char);
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               "ADD",
                               style: TextStyle(
                                 fontSize: 20.0,
+                                color: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            color: Colors.teal,
                           ),
                         ),
                       )
@@ -177,11 +187,11 @@ class _UpdateScoreState extends State<UpdateScore> {
       ),
     );
   }
+
   void _add(Character character) async {
     Navigator.pop(context, true);
     int result = await helper.updateCharacter(character);
-    if(result != 0){
-    } else {
-    }
+    if (result != 0) {
+    } else {}
   }
 }
