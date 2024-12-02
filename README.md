@@ -13,9 +13,9 @@ Built with Flutter and SQLite for local data persistence.
 
 ## Screenshots
 
-<img src="images/screenshots/leaderboard.png" width="300" height="600" style="display: inline-block"/>
-<img src="images/screenshots/add_new.png" width="300" height="600" style="display: inline-block"/>
-<img src="images/screenshots/add_score.png" width="300" height="600" style="display: inline-block"/>
+<img src="images/screenshots/leaderboard.png" width="100" height="600" style="display: inline-block"/>
+<img src="images/screenshots/add_new.png" width="100" height="600" style="display: inline-block"/>
+<img src="images/screenshots/add_score.png" width="100" height="600" style="display: inline-block"/>
 
 
 ## Dependencies
