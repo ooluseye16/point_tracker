@@ -70,7 +70,7 @@ class _CharacterListState extends State<CharacterList> {
                 color: Colors.teal,
               ),
               onPressed: () async {
-                bool result = await showModalBottomSheet(
+                bool? result = await showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   builder: (context) => SingleChildScrollView(

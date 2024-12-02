@@ -1,4 +1,27 @@
 # Point Tracker App
 
-A Flutter app that creates a leaderboard where you could add, update and delete characters contesting for the highest score
+A Flutter app that creates a leaderboard where you can track points for contestants. Features include:
+
+- Add new contestants to the leaderboard
+- Update points for existing contestants 
+- Delete contestants from the leaderboard
+- Visual ranking indicators (gold, silver, bronze) for top 3 positions
+- Undo deletion functionality
+- Clean and intuitive UI with floating action menu
+
+Built with Flutter and SQLite for local data persistence.
+
+## Screenshots
+
+<img src="images/screenshots/leaderboard.png" width="300"/>
+<img src="images/screenshots/add_new.png" width="300"/>
+<img src="images/screenshots/add_score.png" width="300"/>
+
+
+## Dependencies
+
+- sqflite
+- path_provider 
+- google_fonts
+- fab_circular_menu_plus
 
