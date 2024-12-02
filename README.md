@@ -3,7 +3,7 @@
 A Flutter app that creates a leaderboard where you can track points for contestants. Features include:
 
 - Add new contestants to the leaderboard
-- Update points for existing contestants 
+- Update points for existing contestants
 - Delete contestants from the leaderboard
 - Visual ranking indicators (gold, silver, bronze) for top 3 positions
 - Undo deletion functionality
@@ -13,15 +13,15 @@ Built with Flutter and SQLite for local data persistence.
 
 ## Screenshots
 
-<img src="images/screenshots/leaderboard.png" width="300" height="600" style="display: inline-block"/>
-<img src="images/screenshots/add_new.png" width="300" height="600" style="display: inline-block"/>
-<img src="images/screenshots/add_score.png" width="300" height="600" style="display: inline-block"/>
-
+<p align="center">
+  <img src="images/screenshots/leaderboard.png" alt="Leaderboard" width="30%" />
+  <img src="images/screenshots/add_new.png" alt="Add new" width="30%" />
+  <img src="images/screenshots/add_score.png" alt="add score" width="30%" />
+</p>
 
 ## Dependencies
 
 - sqflite
-- path_provider 
+- path_provider
 - google_fonts
 - fab_circular_menu_plus
-
